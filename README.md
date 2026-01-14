@@ -315,10 +315,11 @@ Access the admin panel at: `http://localhost:8000/admin`
 CORS is already configured for common frontend development ports. If you need to add additional origins, update `settings.py`:
 ```python
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # React
-    'http://localhost:5173',  # Vite
-    'http://localhost:8080',  # Vue
-    'your-frontend-url-here',
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:8080",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
 ]
 ```
 

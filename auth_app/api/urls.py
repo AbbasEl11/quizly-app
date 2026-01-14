@@ -1,3 +1,12 @@
+"""
+URL configuration for Authentication API endpoints.
+
+Provides routes for:
+- User registration
+- Login with JWT tokens in HTTP-only cookies
+- Logout with token blacklisting
+- Token refresh using refresh token from cookies
+"""
 from django.urls import path
 from auth_app.api.views import RegistrationView, LoginView, LogoutView, CookieRefreshView
 

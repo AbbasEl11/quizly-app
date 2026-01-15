@@ -173,6 +173,17 @@ Content-Type: application/json
 ```
 **Response**: Quiz with 10 auto-generated questions
 
+**Process Flow:**
+1. Validates YouTube URL and extracts video ID
+2. Downloads audio from YouTube video (using yt-dlp)
+3. Transcribes audio to text (using OpenAI Whisper)
+4. Generates quiz questions from transcript (using Google Gemini AI)
+5. Validates quiz structure (10 questions, 4 options each)
+6. Saves quiz and questions to database in a transaction
+7. Returns complete quiz with all questions
+
+**Note**: This operation can take 30-60 seconds depending on video length and AI response time.
+
 #### Get All User Quizzes
 ```http
 GET /api/quizzes/
@@ -228,10 +239,11 @@ quizly_app/
 │   └── authentication.py  # Custom JWT authentication
 ├── quiz_app/              # Quiz management app
 │   ├── api/
-│   │   ├── views.py       # Quiz CRUD operations
-│   │   ├── serializers.py
-│   │   ├── utils.py       # YouTube, Whisper, Gemini utilities
-│   │   └── urls.py
+│   │   ├── views.py       # HTTP layer: Request/Response handling
+│   │   ├── services.py    # Business logic: Quiz operations
+│   │   ├── serializers.py # Data validation
+│   │   ├── utils.py       # Helper functions: YouTube, Whisper, Gemini
+│   │   └── urls.py        # API routing
 │   ├── models.py          # Quiz and Question models
 │   └── admin.py           # Admin configuration
 ├── core/                  # Django project settings
@@ -241,6 +253,40 @@ quizly_app/
 ├── requirements.txt
 └── db.sqlite3
 ```
+
+## Architecture
+
+This project follows **Clean Architecture** principles with a clear **Service Layer Pattern**:
+
+### 📁 Layer Responsibilities
+
+**Views Layer** (`views.py`)
+- HTTP request/response handling
+- Authentication & permission checks
+- Request validation via serializers
+- Delegates business logic to services
+- Returns appropriate HTTP status codes
+
+**Service Layer** (`services.py`)
+- Contains all business logic
+- Orchestrates complex operations
+- Manages database transactions
+- Coordinates between multiple models
+- Independent of HTTP concerns
+- Highly testable and reusable
+
+**Utils Layer** (`utils.py`)
+- Pure helper functions
+- External API integrations (YouTube, Gemini)
+- Audio processing (download, transcription)
+- JSON validation
+- No business logic or database access
+
+**Benefits:**
+- ✅ **Separation of Concerns**: Each layer has a single responsibility
+- ✅ **Testability**: Services can be tested without HTTP requests
+- ✅ **Reusability**: Services can be used by multiple views or management commands
+- ✅ **Maintainability**: Changes to business logic don't affect HTTP handling
 
 ## Models
 
